@@ -1,0 +1,134 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html>\
+<head>\
+  <meta charset="UTF-8">\
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+  <title>Platform Game</title>\
+  <style>\
+    canvas \{\
+      border: 1px solid #000;\
+      display: block;\
+      margin: 20px auto;\
+    \}\
+  </style>\
+</head>\
+<body>\
+  <canvas id="gameCanvas" width="400" height="300"></canvas>\
+\
+  <script>\
+    // Game variables\
+    const canvas = document.getElementById('gameCanvas');\
+    const ctx = canvas.getContext('2d');\
+\
+    const player = \{\
+      x: 50,\
+      y: 200,\
+      width: 20,\
+      height: 30,\
+      color: '#00F',\
+      speed: 5,\
+      isJumping: false,\
+      jumpHeight: 100,\
+      moveLeft: false,\
+      moveRight: false,\
+    \};\
+\
+    const platforms = [\
+      \{ x: 100, y: 250, width: 100, height: 10, color: '#8B4513' \},\
+      \{ x: 300, y: 150, width: 100, height: 10, color: '#8B4513' \},\
+      \{ x: 200, y: 200, width: 100, height: 10, color: '#8B4513' \},\
+    ];\
+\
+    // Event listeners\
+    canvas.addEventListener('keydown', handleKeyDown);\
+    canvas.addEventListener('keyup', handleKeyUp);\
+\
+    // Main game loop\
+    function gameLoop() \{\
+      update();\
+      draw();\
+      requestAnimationFrame(gameLoop);\
+    \}\
+\
+    // Update game state\
+    function update() \{\
+      // Update player position\
+      if (player.isJumping) \{\
+        player.y -= 5;\
+        if (player.y <= canvas.height - player.jumpHeight) \{\
+          player.isJumping = false;\
+        \}\
+      \} else if (player.y < canvas.height - player.height) \{\
+        player.y += 5;\
+      \}\
+\
+      // Simulate horizontal movement\
+      if (player.moveLeft) \{\
+        player.x -= player.speed;\
+      \}\
+      if (player.moveRight) \{\
+        player.x += player.speed;\
+      \}\
+\
+      // Check for collision with platforms\
+      platforms.forEach(platform => \{\
+        if (\
+          player.x < platform.x + platform.width &&\
+          player.x + player.width > platform.x &&\
+          player.y + player.height > platform.y &&\
+          player.y < platform.y + platform.height\
+        ) \{\
+          player.y = platform.y - player.height;\
+          player.isJumping = false;\
+        \}\
+      \});\
+    \}\
+\
+    // Draw everything\
+    function draw() \{\
+      // Clear canvas\
+      ctx.clearRect(0, 0, canvas.width, canvas.height);\
+\
+      // Draw platforms\
+      platforms.forEach(platform => \{\
+        ctx.fillStyle = platform.color;\
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);\
+      \});\
+\
+      // Draw player\
+      ctx.fillStyle = player.color;\
+      ctx.fillRect(player.x, player.y, player.width, player.height);\
+    \}\
+\
+    // Handle key down events\
+    function handleKeyDown(event) \{\
+      if (event.key === 'Left') \{\
+        player.moveLeft = true;\
+      \} else if (event.key === 'Right') \{\
+        player.moveRight = true;\
+      \} else if (event.key === 'Up' && !player.isJumping) \{\
+        player.isJumping = true;\
+      \}\
+    \}\
+\
+    // Handle key up events\
+    function handleKeyUp(event) \{\
+      if (event.key === 'Left') \{\
+        player.moveLeft = false;\
+      \} else if (event.key === 'Right') \{\
+        player.moveRight = false;\
+      \}\
+    \}\
+\
+    // Start the game loop\
+    gameLoop();\
+  </script>\
+</body>\
+</html>}
